@@ -5,6 +5,8 @@ pygame.init()
 joysticks = []
 clock = pygame.time.Clock()
 keepPlaying = True
+ser = serial.Serial("COM7", 9600, timeout=0)
+ser.xonxoff = 1
 
 '''
 Left Stick:
@@ -33,6 +35,9 @@ while keepPlaying:
         # The 0 button is the 'a' button, 1 is the 'b' button, 2 is the 'x' button, 3 is the 'y' button
         if event.type == pygame.JOYAXISMOTION:
             if event.axis == 0:
+                value = 'abcd'
+                array = bytearray(value.encode('utf-8'))
+                ser.write(array)
                 print(event)
             if event.axis == 4 or event.axis == 5:
                 print(event)
