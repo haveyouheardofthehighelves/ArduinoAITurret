@@ -13,7 +13,7 @@ os.chdir('../')
 # Go up one directory
 
 # Construct the path to the XML file in the parent directory
-xml_file_path = os.path.join(os.getcwd(), 'XMLFILES', 'haarcascade_frontalface_default.xml')
+xml_file_path = os.path.join(os.getcwd(), 'XMLFILES', 'upperbody.xml')
 print(xml_file_path)
 # Create the CascadeClassifier
 face_cascade = cv2.CascadeClassifier(xml_file_path)
@@ -22,6 +22,7 @@ x_origin = 0
 
 ser = serial.Serial("COM3", 9600, timeout=1)
 serial_lock = threading.Lock()
+
 
 # Read the input image
 def writetoarduino(writeall):
@@ -48,7 +49,8 @@ def scanbody(part, B, G, R):
     for (x, y, w, h) in part:
         center_x = x + w // 2
         center_y = y + h // 2
-        pos = [center_x, center_y]
+        pos = (center_x, center_y)
+        cv2.rectangle(img, (x, y), (x + w, y + h), (B, G, R), 5)
         servoX = np.interp(center_x, [0, 640], [0, 100])
         writetoarduino(f'{135 - math.floor(servoX)}s')
         # Calculate the distance from the origin to the center of the face
