@@ -36,13 +36,12 @@ def prepare_motors():
 
 
 def shoot():
-    while True:
-        writetoarduino('1m')
-        time.sleep(2)
-        writetoarduino('1p')
-        time.sleep(.1)
-        writetoarduino('0p')
-        writetoarduino('0m')
+    writetoarduino('1m')
+    time.sleep(2)
+    writetoarduino('1p')
+    time.sleep(.1)
+    writetoarduino('0p')
+    writetoarduino('0m')
 
 
 def scanbody(part, B, G, R):
@@ -50,7 +49,7 @@ def scanbody(part, B, G, R):
         center_x = x + w // 2
         center_y = y + h // 2
         pos = (center_x, center_y)
-        cv2.rectangle(img, (x, y), (x + w, y + h), (B, G, R), 5)
+        cv2.rectangle(img, (x, y), (x + w, y + h), (B, G, R), 3)
         servoX = np.interp(center_x, [0, 640], [0, 100])
         writetoarduino(f'{135 - math.floor(servoX)}s')
         # Calculate the distance from the origin to the center of the face
@@ -58,9 +57,6 @@ def scanbody(part, B, G, R):
 
 
 time.sleep(5)
-thread = threading.Thread(target=shoot)
-thread.daemon = True  # make the thread trminate when the main program exits
-thread.start()
 
 while True:
     _, img = cap.read()
@@ -73,6 +69,9 @@ while True:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     face = face_cascade.detectMultiScale(gray, 1.1, 3)
     if len(face) == 1:
+        thread = threading.Thread(target=shoot)
+        thread.daemon = True  # make the thread terminate when the main program exits
+        thread.start()
         scanbody(face, 0, 0, 255)
     # Display the output
     cv2.imshow('img', img)
