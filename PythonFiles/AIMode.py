@@ -21,12 +21,13 @@ cap = cv2.VideoCapture(0)
 x_origin = 0
 
 ser = serial.Serial("COM3", 9600, timeout=1)
-
+serial_lock = threading.lock()
 
 # Read the input image
 def writetoarduino(writeall):
-    arr = bytes(writeall, 'utf-8')
-    ser.write(arr)
+    with serial_lock:
+        arr = bytes(writeall, 'utf-8')
+        ser.write(arr)
 
 
 def prepare_motors():
@@ -34,12 +35,13 @@ def prepare_motors():
 
 
 def shoot():
-    writetoarduino('1m')
-    time.sleep(2)
-    writetoarduino('1p')
-    time.sleep(.1)
-    writetoarduino('0p')
-    writetoarduino('0m')
+    while True:
+        writetoarduino('1m')
+        time.sleep(2)
+        writetoarduino('1p')
+        time.sleep(.1)
+        writetoarduino('0p')
+        writetoarduino('0m')
 
 
 def scanbody(part, B, G, R):
