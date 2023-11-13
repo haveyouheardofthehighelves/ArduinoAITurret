@@ -54,12 +54,12 @@ def scanbody(part, B, G, R):
 
 
 time.sleep(5)
-thread = threading.Thread(target= shoot)
-thread.daemon = True #make the thread trminate when the main program exits
+thread = threading.Thread(target=shoot)
+thread.daemon = True  # make the thread trminate when the main program exits
 thread.start()
 
 while True:
-    ''' _, img = cap.read()
+    _, img = cap.read()
     height, width, _ = img.shape
     x_origin = width / 2
     y_origin = height / 2
@@ -74,5 +74,3 @@ while True:
     cv2.imshow('img', img)
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
-'''
-    shoot()
