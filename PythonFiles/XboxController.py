@@ -7,7 +7,7 @@ pygame.init()
 joysticks = []
 clock = pygame.time.Clock()
 keepPlaying = True
-ser = serial.Serial("COM7", 9600, timeout=0)
+ser = serial.Serial("COM3", 9600, timeout=0)
 
 '''
 Left Stick:
