@@ -21,7 +21,7 @@ cap = cv2.VideoCapture(0)
 x_origin = 0
 
 ser = serial.Serial("COM3", 9600, timeout=1)
-
+#serial_lock = threading.lock()
 
 # Read the input image
 def writetoarduino(writeall):
@@ -34,12 +34,13 @@ def prepare_motors():
 
 
 def shoot():
-    writetoarduino('1m')
-    time.sleep(2)
-    writetoarduino('1p')
-    time.sleep(.1)
-    writetoarduino('0p')
-    writetoarduino('0m')
+    while True:
+        writetoarduino('1m')
+        time.sleep(2)
+        writetoarduino('1p')
+        time.sleep(.1)
+        writetoarduino('0p')
+        writetoarduino('0m')
 
 
 def scanbody(part, B, G, R):
@@ -59,7 +60,7 @@ thread.daemon = True #make the thread trminate when the main program exits
 thread.start()
 
 while True:
-    ''' _, img = cap.read()
+    """ _, img = cap.read()
     height, width, _ = img.shape
     x_origin = width / 2
     y_origin = height / 2
@@ -74,5 +75,6 @@ while True:
     cv2.imshow('img', img)
     if cv2.waitKey(1) & 0xff == ord('q'):
         break
-'''
+    """
     shoot()
+  
