@@ -21,7 +21,7 @@ cap = cv2.VideoCapture(0)
 x_origin = 0
 
 ser = serial.Serial("COM3", 9600, timeout=1)
-serial_lock = threading.lock()
+serial_lock = threading.Lock()
 
 # Read the input image
 def writetoarduino(writeall):
