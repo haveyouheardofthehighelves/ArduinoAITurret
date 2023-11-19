@@ -49,20 +49,19 @@ def camdisplay():
 
 master = tk.Tk()
 master.title('Hello')
-master.geometry("1400x800")  # Change the dimensions as needed
+master.geometry("1400x650")  # Change the dimensions as needed
 
 # Create a grid for the master window
 master.grid_rowconfigure(0, weight=5)
 master.grid_columnconfigure(0, weight=5)
 
 C_1 = tk.Canvas(master)
-C_3 = tk.Canvas(master)
 C_1.grid(row=0, column=0, sticky="nsew")
 C_2 = tk.Canvas(master)
 C_2.grid(row=0, column=2, sticky="nsew")
 C_2 = tk.Canvas(master)
 C_2.grid(row=0, column=2, sticky="nsew")
-C_3.grid(row=1, column=0, sticky="nsew")
+
 
 # Create labels inside the canvas
 label_width = 30
