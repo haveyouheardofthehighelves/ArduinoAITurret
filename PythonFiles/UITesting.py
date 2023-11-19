@@ -51,6 +51,7 @@ def camdisplay():
 master = tk.Tk()
 master.title('Hello')
 master.geometry("1400x600")  # Change the dimensions as needed
+master.resizable(width=0, height=0)
 
 # Create a grid for the master window
 master.grid_rowconfigure(0, weight=5)
