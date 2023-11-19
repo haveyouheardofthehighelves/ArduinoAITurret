@@ -55,41 +55,41 @@ master.geometry("1400x800")  # Change the dimensions as needed
 master.grid_rowconfigure(0, weight=5)
 master.grid_columnconfigure(0, weight=5)
 
-
-
 C_1 = tk.Canvas(master)
+C_3 = tk.Canvas(master)
 C_1.grid(row=0, column=0, sticky="nsew")
 C_2 = tk.Canvas(master)
 C_2.grid(row=0, column=2, sticky="nsew")
 C_2 = tk.Canvas(master)
 C_2.grid(row=0, column=2, sticky="nsew")
-# Create labels inside the canvas
-# ...
+C_3.grid(row=1, column=0, sticky="nsew")
 
 # Create labels inside the canvas
 label_width = 30
 label_height = 15
+AI_sens = tk.Scale(C_1, from_=0, to=180, orient="horizontal", length=300)
+
 AI_Label = tk.Label(C_1, text='AI', width=label_width, height=label_height, borderwidth=2, relief="solid")
 Manual_Label = tk.Label(C_2, text='Manual', width=label_width, height=label_height, borderwidth=2, relief="solid")
 
 # Create Scale widget for AI_sens
-AI_sens = tk.Scale(master, from_=0, to=180, orient="horizontal", length=300)
 AI_sens.set(90)
 
 # Create VideoLabel
 VideoLabel = tk.Label(C_2, borderwidth=3, relief="solid")
 VideoLabel.grid(row=0, column=0, padx=50, pady=50, sticky="ne")
 
+# Create another Scale widget for Manual_Label
+Manual_Sens = tk.Scale(master, from_=0, to=180, orient="horizontal", length=300)
+Manual_Sens.set(90)
+
 # Create other labels and Scale using grid
 AI_Label.grid(row=0, column=1, padx=50, pady=185, sticky="e")  # Adjust padx and sticky for AI_Label
 Manual_Label.grid(row=0, column=2, padx=50, pady=185, sticky="e")  # Adjust padx and sticky for Manual_Label
+AI_sens.grid(row=0, column=1, sticky="nw", padx=15, pady=120, columnspan=2)
 
-
-AI_sens.grid(row=1, column=0, sticky="sw")
-
-
-# ...
-
+# Place the Manual_Sens widget above Manual_Label
+Manual_Sens.grid(row=0, column=2, padx=10, pady=120, sticky="ne", columnspan=2)
 
 camdisplay()
 master.mainloop()
