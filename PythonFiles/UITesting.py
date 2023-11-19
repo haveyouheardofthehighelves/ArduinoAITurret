@@ -49,24 +49,47 @@ def camdisplay():
 
 master = tk.Tk()
 master.title('Hello')
+master.geometry("1400x800")  # Change the dimensions as needed
 
-C_1 = tk.Canvas(master, width=1500, height=700)
-C_1.pack()
+# Create a grid for the master window
+master.grid_rowconfigure(0, weight=5)
+master.grid_columnconfigure(0, weight=5)
 
-# Create a label inside the canvas
+
+
+C_1 = tk.Canvas(master)
+C_1.grid(row=0, column=0, sticky="nsew")
+C_2 = tk.Canvas(master)
+C_2.grid(row=0, column=2, sticky="nsew")
+C_2 = tk.Canvas(master)
+C_2.grid(row=0, column=2, sticky="nsew")
+# Create labels inside the canvas
+# ...
+
+# Create labels inside the canvas
 label_width = 30
 label_height = 15
 AI_Label = tk.Label(C_1, text='AI', width=label_width, height=label_height, borderwidth=2, relief="solid")
-Manual_Label = tk.Label(C_1, text='Manual', width=label_width, height=label_height, borderwidth=2, relief="solid")
-# Adjust the coordinates to place the label at the bottom left corner
+Manual_Label = tk.Label(C_2, text='Manual', width=label_width, height=label_height, borderwidth=2, relief="solid")
+
+# Create Scale widget for AI_sens
 AI_sens = tk.Scale(master, from_=0, to=180, orient="horizontal", length=300)
 AI_sens.set(90)
 
-VideoLabel = tk.Label(C_1)
-C_1.create_window(600, 400, window=VideoLabel, anchor='center')
-C_1.create_window(165, 600, window=AI_sens, anchor='sw')
-C_1.create_window(100, 500, window=AI_Label, anchor='sw')
-C_1.create_window(315, 500, window=Manual_Label, anchor='sw')
+# Create VideoLabel
+VideoLabel = tk.Label(C_2, borderwidth=3, relief="solid")
+VideoLabel.grid(row=0, column=0, padx=50, pady=50, sticky="ne")
+
+# Create other labels and Scale using grid
+AI_Label.grid(row=0, column=1, padx=50, pady=185, sticky="e")  # Adjust padx and sticky for AI_Label
+Manual_Label.grid(row=0, column=2, padx=50, pady=185, sticky="e")  # Adjust padx and sticky for Manual_Label
+
+
+AI_sens.grid(row=1, column=0, sticky="sw")
+
+
+# ...
+
 
 camdisplay()
 master.mainloop()
