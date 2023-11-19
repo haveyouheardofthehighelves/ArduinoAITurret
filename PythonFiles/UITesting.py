@@ -31,6 +31,7 @@ def scanbody(part, B, G, R, frame):
 
 def camdisplay():
     _, frame = cap.read()
+    frame = cv2.resize(frame, (600, 400))
     height, width, _ = frame.shape
     x_origin = width / 2
     y_origin = height / 2
@@ -49,7 +50,7 @@ def camdisplay():
 
 master = tk.Tk()
 master.title('Hello')
-master.geometry("1400x650")  # Change the dimensions as needed
+master.geometry("1400x600")  # Change the dimensions as needed
 
 # Create a grid for the master window
 master.grid_rowconfigure(0, weight=5)
@@ -93,7 +94,7 @@ AI_sens.grid(row=0, column=1, sticky="nw", padx=15, pady=120, columnspan=2)
 Manual_Sens.grid(row=0, column=2, padx=10, pady=120, sticky="ne", columnspan=2)
 
 Title_Label.grid(row=0, column=0, sticky='n', columnspan=2, pady=10)
-Angle_Update.grid(row=0, column=0, sticky='s', columnspan=2, pady=10)
+Angle_Update.grid(row=0, column=0, sticky='s', columnspan=2, pady = 100)
 
 camdisplay()
 master.mainloop()
