@@ -14,7 +14,7 @@ os.chdir('../')
 # Go up one directory
 
 # Construct the path to the XML file in the parent directory
-xml_file_path = os.path.join(os.getcwd(), 'XMLFILES', 'upperbody.xml')
+xml_file_path = os.path.join(os.getcwd(), 'XMLFILES', 'haarcascade_frontalface_default.xml')
 print(xml_file_path)
 # Create the CascadeClassifier
 face_cascade = cv2.CascadeClassifier(xml_file_path)
@@ -83,13 +83,16 @@ VideoLabel.grid(row=0, column=0, padx=50, pady=50, sticky="ne")
 Manual_Sens = tk.Scale(master, from_=0, to=180, orient="horizontal", length=300)
 Manual_Sens.set(90)
 
+Title_Label = tk.Label(C_2, text="AI Feed", font=("Helvetica", 16))
+
 # Create other labels and Scale using grid
 AI_Label.grid(row=0, column=1, padx=50, pady=185, sticky="e")  # Adjust padx and sticky for AI_Label
 Manual_Label.grid(row=0, column=2, padx=50, pady=185, sticky="e")  # Adjust padx and sticky for Manual_Label
 AI_sens.grid(row=0, column=1, sticky="nw", padx=15, pady=120, columnspan=2)
 
-# Place the Manual_Sens widget above Manual_Label
 Manual_Sens.grid(row=0, column=2, padx=10, pady=120, sticky="ne", columnspan=2)
+
+Title_Label.grid(row=0, column=0, sticky='n',columnspan=2,pady=10)
 
 camdisplay()
 master.mainloop()
