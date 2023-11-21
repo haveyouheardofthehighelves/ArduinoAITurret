@@ -2,11 +2,12 @@ import tkinter as tk
 import cv2
 import os
 from PIL import ImageTk, Image
+import threading
+import queue
+import time
+import inputs
 from inputs import get_gamepad
-from inputs import UnpluggedError
-from inputs import devices
-for device in devices.gamepads:
-    print(device)
+
 
 current_directory = os.getcwd()
 os.chdir('../')
@@ -19,6 +20,8 @@ print(xml_file_path)
 face_cascade = cv2.CascadeClassifier(xml_file_path)
 cap = cv2.VideoCapture(0)
 
+
+
 def scanbody(part, B, G, R, frame):
     for (x, y, w, h) in part:
         center_x = x + w // 2
@@ -26,57 +29,57 @@ def scanbody(part, B, G, R, frame):
         pos = (center_x, center_y)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (B, G, R), 3)
 
-def camdisplay():
-    _, frame = cap.read()
-    frame = cv2.resize(frame, (600, 400))
-    height, width, _ = frame.shape
-    x_origin = width / 2
-    y_origin = height / 2
-    origin = (x_origin, y_origin)
-
-    # Convert into grayscales
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    face = face_cascade.detectMultiScale(gray, 1.1, 3)
-    scanbody(face, 0, 0, 255, frame)
-    img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-    imgtk = ImageTk.PhotoImage(image=img)
-    VideoLabel.imgtk = imgtk
-    VideoLabel.configure(image=imgtk)
-    VideoLabel.after(20, camdisplay)
-    angle = AI_Sens.get()
-    Video_Angle_Update.config(text=f"Servo Angle: {angle}")
-
-    # Update the angle label (example, you can replace it with your actual angle calculation)
-
-def poll_controller():
-    try:
+def opencv_thread(frame_queue):
+    while True:
+        _, frame = cap.read()
+        frame = cv2.resize(frame, (600, 400))
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        face = face_cascade.detectMultiScale(gray, 1.1, 3)
+        scanbody(face, 0, 0, 255, frame)
+        # Send raw frame data to the queue
+        frame_queue.put(frame)
+        time.sleep(0.01)
+      
+def controller_polling(controller_queue):
+    while True:
         events = get_gamepad()
-    
         for event in events:
-            print(event.ev_type, event.code, event.state)  # Debugging print
             if event.ev_type == 'Key':
                 if event.code == 'BTN_SOUTH' and event.state == 1:  # 'A' button pressed
-                    current_color = AI_Label.cget("fg")
-                    new_color = "green" if current_color == "red" else "red"
-                    AI_Label.config(fg=new_color)
-                    print("A button pressed, color changed to", new_color)  # Debugging print
-    except UnpluggedError:
-        print("No gamepad found. Please connect your controller.")
-        # Optionally, you can re-try after a delay
-        master.after(10000, poll_controller)  # Retry after 1 second
-    else:
-        # Schedule the next poll only if no error occurred
-        master.after(100, poll_controller)    
-    # Schedule the next poll
-    master.after(100, poll_controller)
+                    controller_queue.put("toggle_color")
+        time.sleep(0.01)
+
+def update_gui(frame_queue, controller_queue):
+    global VideoLabel, AI_Label, Video_Angle_Update
+    while True:
+        if not frame_queue.empty():
+            frame = frame_queue.get()
+            img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+            imgtk = ImageTk.PhotoImage(image=img)
+            VideoLabel.imgtk = imgtk  # Keep a reference
+            VideoLabel.configure(image=imgtk)
+            angle = AI_Sens.get()
+            Video_Angle_Update.config(text=f"Servo Angle: {angle}")
+            
+        if not controller_queue.empty():
+            event = controller_queue.get()
+            if event == "toggle_color":
+                current_color = AI_Label.cget("fg")
+                new_color = "green" if current_color == "red" else "red"
+                AI_Label.config(fg=new_color)
+
+                
+        master.update_idletasks()
+        master.update()
+        
 
 master = tk.Tk()
 master.title('Hello')
 master.geometry ("720x360")
+master.state('zoomed') 
 # Configure row 0 column 0 to expand with a weight of 1
 master.grid_rowconfigure(0, weight=1)
 master.grid_columnconfigure(0, weight=1)
-master.state('zoomed') 
 
 #Create widgets
 frame_main = tk.Frame(master,background="white")
@@ -91,17 +94,13 @@ label_height = 15
 VideoLabel = tk.Label(frame_mid, borderwidth=3, relief="solid", bg="white")
 Video_Title_Label = tk.Label(frame_mid, text="AI Feed", font=("Georgia", 16),fg="black", bg="white")
 Video_Angle_Update = tk.Label(frame_mid, text="Servo Angle: 90", font=("Georgia", 16),fg="black", bg="white")
-AI_Label = tk.Label(frame_mid, text='AI', width=label_width, height=label_height, 
-                    borderwidth=2, relief="solid", font=("Georgia", 10), fg="red", bg="white", )
 
-#AI_Label = tk.Label(frame_mid, text='AI', width=label_width, height=label_height, borderwidth=2, relief="solid", font=("Georgia", 10),fg="black", bg="red")
+
+AI_Label = tk.Label(frame_mid, text='AI', width=label_width, height=label_height, borderwidth=2, relief="solid", font=("Georgia", 10),fg="red", bg="white")
 AI_Sens = tk.Scale(frame_mid, from_=0, to=180, orient="horizontal", length=300, fg="black", bg="white")
 AI_Sens.set(90)
-Manual_Label = tk.Label(frame_mid, text='Manual', width=label_width, height=label_height, 
-                    borderwidth=2, relief="solid", font=("Georgia", 10), fg="green", bg="white", )
 
-#AI
-#Manual_Label = tk.Label(frame_mid, text='Manual', width=label_width, height=label_height, borderwidth=2, relief="solid", font=("Georgia", 10),fg="black", bg="green")
+Manual_Label = tk.Label(frame_mid, text='Manual', width=label_width, height=label_height, borderwidth=2, relief="solid", font=("Georgia", 10),fg="green", bg="white")
 Manual_Sens = tk.Scale(frame_mid, from_=0, to=180, orient="horizontal", length=300, fg="black", bg="white")
 Manual_Sens.set(90)
 
@@ -127,6 +126,13 @@ Manual_Label.grid(row=0, column=2, padx=70, pady=185, sticky="e")
 AI_Sens.grid(row=0, column=1,padx=15, pady=120, sticky="nw")
 Manual_Sens.grid(row=0, column=2, padx=10, pady=120, sticky="ne")
 
-camdisplay()
-poll_controller()
-master.mainloop()
+# Queue for frame and controller communication
+frame_queue = queue.Queue()
+controller_queue = queue.Queue()
+
+# Starting the threads
+threading.Thread(target=opencv_thread, args=(frame_queue,), daemon=True).start()
+threading.Thread(target=controller_polling, args=(controller_queue,), daemon=True).start()
+
+# Start the Tkinter main loop
+update_gui(frame_queue,controller_queue)
