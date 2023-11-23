@@ -1,10 +1,9 @@
 import tkinter as tk
+import tkinter.ttk as ttk
 import cv2
 import os
-import InputMonitor
 import XboxController
 from PIL import ImageTk, Image
-from tkinter import ttk
 import threading
 
 
@@ -51,6 +50,16 @@ def camdisplay():
     VideoLabel.configure(image=imgtk)
     VideoLabel.after(20, camdisplay)
     angle = XboxController.check.angle
+    pressed = XboxController.check.start_button
+    if pressed:
+        if Manual_Label.cget("foreground") == "green":
+            Manual_Label.config(fg="red")
+            AI_Label.config(fg="green")
+        else:
+            Manual_Label.config(fg="green")
+            AI_Label.config(fg="red")
+        XboxController.check.start_button = False
+
     Video_Angle_Update.config(text=f"Servo Angle: {angle}")
     # Update the angle label (example, you can replace it with your actual angle calculation)
 
@@ -80,15 +89,21 @@ VideoLabel = tk.Label(frame_mid, borderwidth=3, relief="solid", bg="white")
 Video_Title_Label = tk.Label(frame_mid, text="AI Feed", font=("Georgia", 16), fg="black", bg="white")
 Video_Angle_Update = tk.Label(frame_mid, text="Servo Angle: 90", font=("Georgia", 16), fg="black", bg="white")
 
-AI_Label = tk.Label(frame_mid, text='AI', width=label_width, height=label_height, borderwidth=2, relief="solid",
-                    font=("Georgia", 10), fg="black", bg="white")
-AI_Sens = tk.Scale(frame_mid, from_=0, to=180, orient="horizontal", length=300, fg="black", bg="white")
-AI_Sens.set(90)
+# ["aqua", "step", "clam", "alt", "default", "classic"]
+style = ttk.Style()
+style.configure("aqua", bordercolor="blue")
 
 Manual_Label = tk.Label(frame_mid, text='Manual', width=label_width, height=label_height, borderwidth=2, relief="solid",
-                        font=("Georgia", 10), fg="black", bg="white")
+                        font=("Georgia", 10), fg="green", bg="white")
+
 Manual_Sens = tk.Scale(frame_mid, from_=0, to=180, orient="horizontal", length=300, fg="black", bg="white")
 Manual_Sens.set(90)
+
+AI_Label = tk.Label(frame_mid, text='AI', width=label_width, height=label_height, borderwidth=2, relief="solid",
+                    font=("Georgia", 10), fg="red", bg="white")
+
+AI_Sens = tk.Scale(frame_mid, from_=0, to=180, orient="horizontal", length=300, fg="black", bg="white")
+AI_Sens.set(90)
 
 # Grid Widgets on the screen
 frame_main.grid(row=0, column=0, sticky="ewns")
@@ -102,11 +117,11 @@ frame_left.grid(row=0, column=0, sticky="ewns")
 frame_mid.grid(row=0, column=1)
 frame_right.grid(row=0, column=2, sticky="ewns")
 
-AI_Label.grid(row=0, column=1, padx=70, pady=185, sticky="w")
-Manual_Label.grid(row=0, column=2, padx=70, pady=185, sticky="e")
+Manual_Label.grid(row=0, column=1, padx=70, pady=185, sticky="w")
+AI_Label.grid(row=0, column=2, padx=70, pady=185, sticky="e")
 
-AI_Sens.grid(row=0, column=1, padx=15, pady=120, sticky="nw")
-Manual_Sens.grid(row=0, column=2, padx=10, pady=120, sticky="ne")
+Manual_Sens.grid(row=0, column=1, padx=15, pady=120, sticky="nw")
+AI_Sens.grid(row=0, column=2, padx=10, pady=120, sticky="ne")
 
 VideoLabel.grid(row=0, column=0)
 Video_Title_Label.grid(row=0, column=0, sticky='n', pady=30)

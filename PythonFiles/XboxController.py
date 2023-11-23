@@ -107,4 +107,7 @@ def StartGame():
                         writetoarduino(f'1p')
                     else:
                         writetoarduino(f'0p')
+            if event.type == pygame.JOYBUTTONUP:
+                if event.button == 7:
+                    check.start_button = True
         check.angle = 180 - servoAngle
