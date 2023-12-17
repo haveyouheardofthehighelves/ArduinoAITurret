@@ -6,6 +6,8 @@ import XboxController
 from PIL import ImageTk, Image
 import threading
 
+U_IManager = {'AI_Sens': 0, 'Manual_Sens': 0}
+
 
 def close_window():
     master.destroy()
@@ -32,7 +34,7 @@ def scanbody(part, B, G, R, frame):
         cv2.rectangle(frame, (x, y), (x + w, y + h), (B, G, R), 3)
 
 
-def camdisplay():
+def update():
     _, frame = cap.read()
     frame = cv2.resize(frame, (600, 400))
     height, width, _ = frame.shape
@@ -48,7 +50,7 @@ def camdisplay():
     imgtk = ImageTk.PhotoImage(image=img)
     VideoLabel.imgtk = imgtk
     VideoLabel.configure(image=imgtk)
-    VideoLabel.after(20, camdisplay)
+    VideoLabel.after(20, update)
     angle = XboxController.check.angle
     pressed = XboxController.check.start_button
     if pressed:
@@ -61,6 +63,9 @@ def camdisplay():
         XboxController.check.start_button = False
 
     Video_Angle_Update.config(text=f"Servo Angle: {angle}")
+    U_IManager['AI_Sens'] = AI_Sens.get()
+    U_IManager['Manual_Sens'] = Manual_Sens.get()
+    print(U_IManager)
     # Update the angle label (example, you can replace it with your actual angle calculation)
 
 
@@ -127,5 +132,5 @@ VideoLabel.grid(row=0, column=0)
 Video_Title_Label.grid(row=0, column=0, sticky='n', pady=30)
 Video_Angle_Update.grid(row=0, column=0, sticky='s', pady=30)
 
-camdisplay()
+update()
 master.mainloop()
