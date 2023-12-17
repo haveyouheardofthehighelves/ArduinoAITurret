@@ -51,21 +51,29 @@ def update():
     VideoLabel.imgtk = imgtk
     VideoLabel.configure(image=imgtk)
     VideoLabel.after(20, update)
-    angle = XboxController.check.angle
-    pressed = XboxController.check.start_button
-    if pressed:
+    check = XboxController.check
+    if check.start_button:
         if Manual_Label.cget("foreground") == "green":
             Manual_Label.config(fg="red")
             AI_Label.config(fg="green")
         else:
             Manual_Label.config(fg="green")
             AI_Label.config(fg="red")
-        XboxController.check.start_button = False
+        check.start_button = False
 
-    Video_Angle_Update.config(text=f"Servo Angle: {angle}")
+    Video_Angle_Update.config(text=f"Servo Angle: {check.angle}")
+    if check.flywheels:
+        Flywheel_Label.config(text='Flywheels: ON ')
+    else:
+        Flywheel_Label.config(text='Flywheels: OFF')
+
+    if check.solenoid:
+        Solenoid_Label.config(text='Solenoid: ON ')
+    else:
+        Solenoid_Label.config(text='Solenoid: OFF')
+
     U_IManager['AI_Sens'] = AI_Sens.get()
     U_IManager['Manual_Sens'] = Manual_Sens.get()
-    print(U_IManager)
     # Update the angle label (example, you can replace it with your actual angle calculation)
 
 
@@ -109,7 +117,8 @@ AI_Label = tk.Label(frame_mid, text='AI', width=label_width, height=label_height
 
 AI_Sens = tk.Scale(frame_mid, from_=0, to=180, orient="horizontal", length=300, fg="black", bg="white")
 AI_Sens.set(90)
-
+Flywheel_Label = tk.Label(frame_left, text='Flywheels: OFF')
+Solenoid_Label = tk.Label(frame_left, text='Solenoids: OFF')
 # Grid Widgets on the screen
 frame_main.grid(row=0, column=0, sticky="ewns")
 frame_main.grid_rowconfigure(0, weight=1)
@@ -124,7 +133,8 @@ frame_right.grid(row=0, column=2, sticky="ewns")
 
 Manual_Label.grid(row=0, column=1, padx=70, pady=185, sticky="w")
 AI_Label.grid(row=0, column=2, padx=70, pady=185, sticky="e")
-
+Flywheel_Label.grid(row=0, column=1, padx=0, pady=0, sticky="s")
+Solenoid_Label.grid(row=1, column=1, padx=0, pady=0, sticky="s")
 Manual_Sens.grid(row=0, column=1, padx=15, pady=120, sticky="nw")
 AI_Sens.grid(row=0, column=2, padx=10, pady=120, sticky="ne")
 

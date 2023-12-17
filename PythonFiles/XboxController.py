@@ -98,14 +98,17 @@ def StartGame():
                         writetoarduino(f'{180 - servoAngle}s')
                 if event.axis == 4:
                     if round(event.value) == 1:
+                        check.flywheels = True
                         writetoarduino(f'1m')
                     else:
+                        check.flywheels = False
                         writetoarduino(f'0m')
                 if event.axis == 5:
-                    print(round(event.value))
                     if round(event.value) == 1:
+                        check.solenoid = True
                         writetoarduino(f'1p')
                     else:
+                        check.solenoid = False
                         writetoarduino(f'0p')
             if event.type == pygame.JOYBUTTONUP:
                 if event.button == 7:

@@ -10,3 +10,6 @@ class InputMonitor:
 
     def getPressed(self):
         return self.start_button
+
+    def __str__(self):
+        return f'start_button: {self.start_button}, angle:{self.angle}, solenoid:{self.solenoid}, flywheels:{self.flywheels}'
