@@ -41,10 +41,10 @@ prevscale = 0
 check = InputMonitor.InputMonitor()
 
 
-def servo_shenanigans(joyinput):
+def servo_shenanigans(joyinput, manual_sens):
     global servoAngle
     global prevscale
-    scaled_up = round(joyinput * 2)
+    scaled_up = round(joyinput * manual_sens)
     prevscale = scaled_up
     if servoAngle < 180 and scaled_up > 0:
         if servoAngle + scaled_up > 180:

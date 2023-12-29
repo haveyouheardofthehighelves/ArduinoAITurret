@@ -6,8 +6,6 @@ import XboxController
 from PIL import ImageTk, Image
 import threading
 
-U_IManager = {'AI_Sens': 0, 'Manual_Sens': 0}
-
 
 def close_window():
     master.destroy()
@@ -71,9 +69,8 @@ def update():
         Solenoid_Label.config(text='Solenoid: ON ')
     else:
         Solenoid_Label.config(text='Solenoid: OFF')
-
-    U_IManager['AI_Sens'] = AI_Sens.get()
-    U_IManager['Manual_Sens'] = Manual_Sens.get()
+    if check.Manual_sens != Manual_Sens.get()/100:
+        check.Manual_sens = Manual_Sens.get()/100
     # Update the angle label (example, you can replace it with your actual angle calculation)
 
 
@@ -109,8 +106,8 @@ style.configure("aqua", bordercolor="blue")
 Manual_Label = tk.Label(frame_mid, text='Manual', width=label_width, height=label_height, borderwidth=2, relief="solid",
                         font=("Georgia", 10), fg="green", bg="white")
 
-Manual_Sens = tk.Scale(frame_mid, from_=0, to=180, orient="horizontal", length=300, fg="black", bg="white")
-Manual_Sens.set(90)
+Manual_Sens = tk.Scale(frame_mid, from_=0, to=250, orient="horizontal", length=300, fg="black", bg="white")
+Manual_Sens.set(125)
 
 AI_Label = tk.Label(frame_mid, text='AI', width=label_width, height=label_height, borderwidth=2, relief="solid",
                     font=("Georgia", 10), fg="red", bg="white")
@@ -143,4 +140,5 @@ Video_Title_Label.grid(row=0, column=0, sticky='n', pady=30)
 Video_Angle_Update.grid(row=0, column=0, sticky='s', pady=30)
 
 update()
+master.state('zoomed')
 master.mainloop()
